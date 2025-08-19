@@ -1,0 +1,47 @@
+services:
+  slskd:
+    image: slskd/slskd:latest
+    user: "${UID:-1000}"
+    container_name: slskd
+    ports:
+      - "5030:5030" # web UI HTTP
+      - "5031:5031" # web UI HTTPS
+      - "50300:50300" # listen for incoming connections
+    volumes:
+      - ./slskd_data:/app/data # Persistent storage for slskd configuration and data
+      - ./music:/music:rw # Mount your music library, ensure slskd can read/write
+    environment:
+      - SLSKD_REMOTE_CONFIGURATION=true
+    restart: unless-stopped
+
+  navidrome:
+    image: deluan/navidrome:latest
+    user: "${UID:-1000}"
+    container_name: navidrome
+    ports:
+      - "4533:4533" # Navidrome web interface port
+    volumes:
+      - ./navidrome_data:/data # Persistent storage for Navidrome database and config
+      - ./music:/music:ro # Mount your music library (read-only for Navidrome)
+    environment:
+      - ND_SCANSCHEDULE=1h # Scan for new music every hour
+      - ND_LOGLEVEL=info # Set log level
+    restart: unless-stopped
+  zrok_slskd:
+    image: openziti/zrok
+    restart: unless-stopped
+    user: "${UID:-1000}"
+    volumes:
+      - ${HOME}/.zrok:/home/ziggy/.zrok
+    environment: # todo specify creds
+      PFXLOG_NO_JSON: "true"
+    command: share reserved "seviseek" --headless # todo pull from config
+  zrok_navidrome:
+    image: openziti/zrok
+    restart: unless-stopped
+    user: "${UID:-1000}"
+    volumes:
+      - ${HOME}/.zrok:/home/ziggy/.zrok
+    environment:
+      PFXLOG_NO_JSON: "true"
+    command: share reserved "sevidrome" --headless # todo pull from config
