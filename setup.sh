@@ -3,6 +3,6 @@
 # grab env
 source config.env
 
-# set up zrok
-zrok reserve public --unique-name "$STREAMING_SERVER_NAME" http:navidrome:4533
-zrok reserve public --unique-name "$DOWNLOAD_SERVER_NAME" http:slskd:5030
+# reserve public shares for your servers so they can have stable URLs
+zrok reserve public --unique-name "$STREAMING_SERVER_NAME" http://localhost:4533
+zrok reserve public --unique-name "$DOWNLOAD_SERVER_NAME" http://localhost:5030
