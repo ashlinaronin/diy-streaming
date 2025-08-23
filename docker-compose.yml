@@ -12,6 +12,10 @@ services:
       - ./music:/music:rw # Mount your music library, ensure slskd can read/write
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
+      - SLSKD_USERNAME=${SLSKD_USERNAME}
+      - SLSKD_PASSWORD=${SLSKD_PASSWORD}
+      - SLSKD_SLSK_USERNAME=${SLSKD_SLSK_USERNAME}
+      - SLSKD_SLSK_PASSWORD=${SLSKD_SLSK_PASSWORD}
     restart: unless-stopped
 
   navidrome:
