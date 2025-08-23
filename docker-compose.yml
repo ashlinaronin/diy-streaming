@@ -35,7 +35,7 @@ services:
       - ${HOME}/.zrok:/home/ziggy/.zrok
     environment: # todo specify creds
       PFXLOG_NO_JSON: "true"
-    command: share reserved "ashiseek" --headless # todo pull from config
+    command: share reserved "${DOWNLOAD_SERVER_NAME}" --headless # todo pull from config
   zrok_navidrome:
     image: openziti/zrok
     restart: unless-stopped
@@ -44,4 +44,4 @@ services:
       - ${HOME}/.zrok:/home/ziggy/.zrok
     environment:
       PFXLOG_NO_JSON: "true"
-    command: share reserved "ashidrome" --headless # todo pull from config
+    command: share reserved "${STREAMING_SERVER_NAME}" --headless # todo pull from config

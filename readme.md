@@ -11,10 +11,10 @@ zrok invite
 zrok enable "$ZROK_AUTH_TOKEN"
 ```
 
-set up your config.env with the names you want for your streaming and download servers. they must be globally unique. example:
+set up your .env with the names you want for your streaming and download servers. they must be globally unique. example:
 
 ```
-# config.env
+# .env
 STREAMING_SERVER_NAME=ashidrome
 DOWNLOAD_SERVER_NAME=ashiseek
 ```
