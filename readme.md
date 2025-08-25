@@ -26,3 +26,9 @@ docker compose -f docker-compose.yml' up -d --build
 ```
 
 visit navidrome to set up your initial admin user at http://localhost:4533/app/#/login
+
+you should also now be able to access your navidrome and slskd instances at the URLs generated based on your config file. for examplem, these are mine because my STREAMING_SERVER_NAME is ashidrome and my DOWNLOAD_SERVER_NAME is ashiseek:
+```
+https://ashidrome.share.zrok.io
+https://ashiseek.share.zrok.io
+```
