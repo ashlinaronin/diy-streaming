@@ -19,7 +19,6 @@ services:
       - SLSKD_DOWNLOADS_DIR=/music
       - SLSKD_SHARED_DIR=/music
     restart: unless-stopped
-
   navidrome:
     image: deluan/navidrome:latest
     user: 1000:1000
