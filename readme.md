@@ -41,6 +41,7 @@ set up your .env with the names you want for your streaming and download servers
 # .env
 STREAMING_SERVER_NAME=ashidrome
 DOWNLOAD_SERVER_NAME=ashiseek
+UPLOAD_SERVER_NAME=ashiupload
 ```
 
 
@@ -51,10 +52,11 @@ docker compose -f docker-compose.yml' up -d --build
 
 visit navidrome to set up your initial admin user at http://localhost:4533/app/#/login
 
-you should also now be able to access your navidrome and slskd instances at the URLs generated based on your config file. for examplem, these are mine because my STREAMING_SERVER_NAME is ashidrome and my DOWNLOAD_SERVER_NAME is ashiseek:
+you should also now be able to access your navidrome and slskd instances at the URLs generated based on your config file. for examplem, these are mine because my STREAMING_SERVER_NAME is ashidrome and my DOWNLOAD_SERVER_NAME is ashiseek and my UPLOAD_SERVER_NAME is ashiupload:
 ```
 https://ashidrome.share.zrok.io
 https://ashiseek.share.zrok.io
+https://ashiupload.share.zrok.io
 ```
 
 # check on filebrowser
