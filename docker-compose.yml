@@ -1,7 +1,7 @@
 services:
   slskd:
     image: slskd/slskd:latest
-    user: "${UID:-1000}"
+    user: 1000:1000
     container_name: slskd
     ports:
       - "5030:5030" # web UI HTTP
@@ -16,11 +16,13 @@ services:
       - SLSKD_PASSWORD=${SLSKD_PASSWORD}
       - SLSKD_SLSK_USERNAME=${SLSKD_SLSK_USERNAME}
       - SLSKD_SLSK_PASSWORD=${SLSKD_SLSK_PASSWORD}
+      - SLSKD_DOWNLOADS_DIR=/music
+      - SLSKD_SHARED_DIR=/music
     restart: unless-stopped
 
   navidrome:
     image: deluan/navidrome:latest
-    user: "${UID:-1000}"
+    user: 1000:1000
     container_name: navidrome
     ports:
       - "4533:4533" # Navidrome web interface port
@@ -34,16 +36,16 @@ services:
   zrok_slskd:
     image: openziti/zrok
     restart: unless-stopped
-    user: "${UID:-1000}"
+    user: 1000:1000
     volumes:
       - ${HOME}/.zrok:/home/ziggy/.zrok
-    environment: # todo specify creds
+    environment:
       PFXLOG_NO_JSON: "true"
     command: share reserved "${DOWNLOAD_SERVER_NAME}" --headless --override-endpoint http://slskd:5030
   zrok_navidrome:
     image: openziti/zrok
     restart: unless-stopped
-    user: "${UID:-1000}"
+    user: 1000:1000
     volumes:
       - ${HOME}/.zrok:/home/ziggy/.zrok
     environment:
