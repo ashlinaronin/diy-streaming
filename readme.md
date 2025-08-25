@@ -20,3 +20,9 @@ DOWNLOAD_SERVER_NAME=ashiseek
 ```
 
 
+next, start all the docker containers:
+```
+docker compose -f docker-compose.yml' up -d --build
+```
+
+visit navidrome to set up your initial admin user at http://localhost:4533/app/#/login

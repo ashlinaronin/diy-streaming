@@ -31,7 +31,8 @@ services:
       - ./music:/music:ro # Mount your music library (read-only for Navidrome)
     environment:
       - ND_SCANSCHEDULE=1h # Scan for new music every hour
-      - ND_LOGLEVEL=info # Set log level
+      - ND_LOGLEVEL=trace # Set log level
+      - ND_ENABLESHARING=true # Enable sharing features
     restart: unless-stopped
   zrok_slskd:
     image: openziti/zrok
