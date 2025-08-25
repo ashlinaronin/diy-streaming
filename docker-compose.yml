@@ -34,6 +34,18 @@ services:
       - ND_LOGLEVEL=trace # Set log level
       - ND_ENABLESHARING=true # Enable sharing features
     restart: unless-stopped
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    user: 1000:1000
+    ports:
+      - "8080:80" # Web UI accessible at http://localhost:8080
+    volumes:
+      - ./music:/srv # FileBrowser will upload directly to your music library
+      - ./filebrowser_data:/database # Persistent FileBrowser config
+    environment:
+      - FB_BASEURL=/filebrowser
+    restart: unless-stopped
   zrok_slskd:
     image: openziti/zrok
     restart: unless-stopped

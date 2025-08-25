@@ -1,3 +1,27 @@
+# overview
+
+## components
+
+## setup
+
+### config
+
+### credentials
+
+### testing
+
+## usage
+
+### downloading w/ soulseek
+
+### uploading (bandcamp, etc)
+
+
+
+## next steps
+
+
+
 first, you'll need to set up zrok:
 
 ```
@@ -32,3 +56,8 @@ you should also now be able to access your navidrome and slskd instances at the 
 https://ashidrome.share.zrok.io
 https://ashiseek.share.zrok.io
 ```
+
+# check on filebrowser
+go to docker desktop and copy the randomly generated admin password from the filebrowser container logs. it will only be shown once!
+
+then navigate to http://localhost:8080 and enter username `admin` and the password you copied.
