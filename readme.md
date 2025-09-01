@@ -1,5 +1,8 @@
 # overview
-this is a guide to setting up your own diy streaming server. it uses docker compose to combine a few open source solutions and put them together. you can run this on any old computer you have lying around with an internet connection. it should even run on a low-power computer like a raspberry pi. all the software is free.
+this is a guide to setting up your own diy streaming server. it uses docker compose to combine a few open source solutions and put them together. you can run this on any old computer you have lying around with an internet connection. it should even run on a low-power computer like a raspberry pi. all the software is free, and the one account you have to create can be done without any billing information and using a temporary email address.
+
+## vpn
+i do recommend using a vpn for downloading, though it is not strictly necessary. it hides your traffic from your internet provider, and i think everyone should be using one anyway. there are many options available, which are out of scope of this guide. there are tradeoffs to consider such as price, security, data privacy and sovereignty (where is the provider based?), so i encourage you to do your own research. but generally a decent vpn service can be had for around $5/month.
 
 ## components
 on your server:
