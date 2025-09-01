@@ -1,11 +1,7 @@
-> note: due to a limitation on the zrok free tier, the filebrowser part of this system isn't currently working. i'm working on a fix! in the meantime, it should be enough to get navidrome and slskd working.
-
 # overview
-
 this is a guide to setting up your own diy streaming server. it uses docker compose to combine a few open source solutions and put them together. you can run this on any old computer you have lying around with an internet connection. it should even run on a low-power computer like a raspberry pi. all the software is free.
 
 ## components
-
 on your server:
 * navidrome - this is the heart of your streaming server (https://www.navidrome.org/). it uses the subsonic protocol
 * slskd - this is a soulseek instance that also runs on your streaming server, so you can download music from anywhere and it will be available for you to stream (https://github.com/slskd/slskd)
@@ -19,18 +15,23 @@ on your phone:
 ## setup
 these directions are for a mac, but should be similar on any unix-based system. on windows, YMMV but the general principles still apply.
 
-you'll need to download and install docker desktop - https://www.docker.com/products/docker-desktop/
+### get this code
+clone this repo. if you haven't done this before, you may find the rest of this guide a bit challenging. but lean into it! https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
 
-then, you'll need to set up zrok:
+### docker
+download and install docker desktop - https://www.docker.com/products/docker-desktop/
+
+### zrok
+then set up zrok - https://docs.zrok.io/docs/guides/install/
 
 ```
-# install zrok
+# install zrok (mac)
 brew install zrok
 
-# set up a zrok account. this will open a browser where you login and get an auth token for the next step
+# set up a zrok account. this will open a browser where you login and get an auth token for the next step. you can use a free email address from somewhere like https://temp-mail.org/en/
 zrok invite
 
-# log into zrok with the auth token
+# log into zrok with the auth token (replace $ZROK_AUTH_TOKEN below with your token)
 zrok enable "$ZROK_AUTH_TOKEN"
 ```
 
@@ -40,8 +41,7 @@ set up your .env with the names you want for your streaming and download servers
 ```
 # .env
 STREAMING_SERVER_NAME=ashidrome
-DOWNLOAD_SERVER_NAME=ashiseek
-UPLOAD_SERVER_NAME=ashiupload
+FILE_SERVER_NAME=ashifile
 ```
 
 also, replace the soulseek credentials with the ones you want to use. you don't need to create a soulseek account anywhere beforehand.
@@ -63,21 +63,24 @@ next, start all the docker containers:
 visit navidrome to set up your initial admin user at http://localhost:4533/app/#/login
 
 #### filebrowser credentials
-go to the docker desktop app and copy the randomly generated admin password from the filebrowser container logs. it will only be shown once!
+go to the docker desktop app and copy the randomly generated admin password from the filebrowser container logs. it will only be shown once! i save everything in my .env to keep the passwords together, but you may also use your favorite password manager, or even a notepad if that's how you prefer to keep track of things.
 
 ### testing
-
-you should also now be able to access your navidrome and slskd instances at the URLs generated based on your config file. for example, these are mine because my STREAMING_SERVER_NAME is ashidrome and my DOWNLOAD_SERVER_NAME is ashiseek and my UPLOAD_SERVER_NAME is ashiupload:
+you should also now be able to access your navidrome, slskd and filebrowser instances at the URLs generated based on your config file. for example, these are mine because my STREAMING_SERVER_NAME is ashidrome and my FILE_SERVER_NAME is ashifile:
 ```
-https://ashidrome.share.zrok.io
-https://ashiseek.share.zrok.io
-https://ashiupload.share.zrok.io
+https://ashidrome.share.zrok.io - navidrome
+https://ashifile.share.zrok.io/download - slskd
+https://ashifile.share.zrok.io/upload - filebrowser
 ```
 
 you can use the slskd credentials you added to your .env file, the navidrome credentials you created when you first opened it, and the filebrowser credentials you copied from the docker logs to log into each system.
 
+i recommend bookmarking all of these now. and it is good practice to create a non-admin user (or users) in the navidrome UI for streaming purposes. take note of those credentials too.
+
+try searching and downloading something from the download page, then check your navidrome server and see that it is now available there to stream. once this is working, download a subsonic client of your choice onto your phone (or whatever device you want to stream to) and configure it with the navidrome URL. i use the amperfy app on ios, so i download that app from the app store, then go to settings > server > url and enter https://ashidrome.share.zrok.io along with my username. then i should be able to use the app just like spotify or apple music.
+
 ## usage
-the general idea is that you download music from soulseek (in my case, ashiseek.share.zrok.io) and it automatically goes into your navidrome library. so then you can listen to it on your phone from anywhere (i use the amperfy client on my iphone). if you purchase music from somewhere like bandcamp and want to upload it, then go to your fileupload server and it will automatically be added to your navidrome library as well.
+the general idea is that you download music from soulseek (in my case, https://ashifile.share.zrok.io/download) and it automatically goes into your navidrome library. so then you can listen to it on your phone from anywhere (i use the amperfy client on my iphone). if you purchase music from somewhere like bandcamp and want to upload it, then go to your fileupload server and it will automatically be added to your navidrome library as well.
 
 ### users
 you can make multiple users with separate libraries and permissions. in my testing so far i have had multiple users but one shared library, and this seems to be the simplest way to share music but have your own playlists.
@@ -89,5 +92,4 @@ navidrome is under active development. one of the features they're currently wor
 there are lots of settings that can be changed in all of these systems, and i encourage you to explore their own documentation. this guide is just an attempt to streamline setting them up to work together. for example, amperfy lets you decide if you want to stream the original file formats (e.g. high-quality but large FLACs) or transcode to a lower-bitrate MP3 for faster speeds. these are the kind of decisions that spotify and apple music make for you, but now that you have your own setup, you can make your own decisions!
 
 ## next steps
-have you tried this? let me know where you got stuck! if you want help getting this set up for your household or community, please reach out. and also give feedback to the maintainers of the projects that i've built upon with this guide.
-
+have you tried this? let me know where you got stuck! if you want help getting this set up for your household or community, please reach out. and also give feedback to the maintainers of the projects that i've built upon with this guide. thanks for your attention!

@@ -12,6 +12,7 @@ services:
       - ./music:/music:rw # Mount your music library, ensure slskd can read/write
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
+      - SLSKD_URL_BASE=/download
       - SLSKD_USERNAME=${SLSKD_USERNAME}
       - SLSKD_PASSWORD=${SLSKD_PASSWORD}
       - SLSKD_SLSK_USERNAME=${SLSKD_SLSK_USERNAME}
@@ -38,22 +39,24 @@ services:
     container_name: filebrowser
     user: 1000:1000
     ports:
-      - "8080:80" # Web UI accessible at http://localhost:8080
+      - "8081:80" # Web UI accessible at http://localhost:8080
     volumes:
       - ./music:/srv # FileBrowser will upload directly to your music library
       - ./filebrowser_data:/database # Persistent FileBrowser config
     environment:
-      - FB_BASEURL=/filebrowser
+      - FB_BASEURL=/upload
     restart: unless-stopped
-  zrok_slskd:
-    image: openziti/zrok
-    restart: unless-stopped
-    user: 1000:1000
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "8080:8080"
     volumes:
-      - ${HOME}/.zrok:/home/ziggy/.zrok
-    environment:
-      PFXLOG_NO_JSON: "true"
-    command: share reserved "${DOWNLOAD_SERVER_NAME}" --headless --override-endpoint http://slskd:5030
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - slskd
+      - filebrowser
+    restart: unless-stopped
   zrok_navidrome:
     image: openziti/zrok
     restart: unless-stopped
@@ -63,3 +66,16 @@ services:
     environment:
       PFXLOG_NO_JSON: "true"
     command: share reserved "${STREAMING_SERVER_NAME}" --headless --override-endpoint http://navidrome:4533
+    depends_on:
+      - navidrome
+  zrok_file:
+    image: openziti/zrok
+    restart: unless-stopped
+    user: 1000:1000
+    volumes:
+      - ${HOME}/.zrok:/home/ziggy/.zrok
+    environment:
+      PFXLOG_NO_JSON: "true"
+    command: share reserved "${FILE_SERVER_NAME}" --headless --override-endpoint http://nginx:8080
+    depends_on:
+      - nginx
