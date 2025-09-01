@@ -19,15 +19,18 @@ on your phone:
 ## setup
 these directions are for a mac, but should be similar on any unix-based system. on windows, YMMV but the general principles still apply.
 
+
+### docker
 you'll need to download and install docker desktop - https://www.docker.com/products/docker-desktop/
 
+### zrok
 then, you'll need to set up zrok:
 
 ```
 # install zrok
 brew install zrok
 
-# set up a zrok account. this will open a browser where you login and get an auth token for the next step
+# set up a zrok account. this will open a browser where you login and get an auth token for the next step. you can use a free email address from somewhere like https://temp-mail.org/en/
 zrok invite
 
 # log into zrok with the auth token
@@ -40,8 +43,7 @@ set up your .env with the names you want for your streaming and download servers
 ```
 # .env
 STREAMING_SERVER_NAME=ashidrome
-DOWNLOAD_SERVER_NAME=ashiseek
-UPLOAD_SERVER_NAME=ashiupload
+FILE_SERVER_NAME=ashifile
 ```
 
 also, replace the soulseek credentials with the ones you want to use. you don't need to create a soulseek account anywhere beforehand.
@@ -67,17 +69,17 @@ go to the docker desktop app and copy the randomly generated admin password from
 
 ### testing
 
-you should also now be able to access your navidrome and slskd instances at the URLs generated based on your config file. for example, these are mine because my STREAMING_SERVER_NAME is ashidrome and my DOWNLOAD_SERVER_NAME is ashiseek and my UPLOAD_SERVER_NAME is ashiupload:
+you should also now be able to access your navidrome, slskd and filebrowser instances at the URLs generated based on your config file. for example, these are mine because my STREAMING_SERVER_NAME is ashidrome and my FILE_SERVER_NAME is ashifile:
 ```
-https://ashidrome.share.zrok.io
-https://ashiseek.share.zrok.io
-https://ashiupload.share.zrok.io
+https://ashidrome.share.zrok.io - navidrome
+https://ashifile.share.zrok.io/download - slskd
+https://ashifile.share.zrok.io/upload - filebrowser
 ```
 
 you can use the slskd credentials you added to your .env file, the navidrome credentials you created when you first opened it, and the filebrowser credentials you copied from the docker logs to log into each system.
 
 ## usage
-the general idea is that you download music from soulseek (in my case, ashiseek.share.zrok.io) and it automatically goes into your navidrome library. so then you can listen to it on your phone from anywhere (i use the amperfy client on my iphone). if you purchase music from somewhere like bandcamp and want to upload it, then go to your fileupload server and it will automatically be added to your navidrome library as well.
+the general idea is that you download music from soulseek (in my case, https://ashifile.share.zrok.io/download) and it automatically goes into your navidrome library. so then you can listen to it on your phone from anywhere (i use the amperfy client on my iphone). if you purchase music from somewhere like bandcamp and want to upload it, then go to your fileupload server and it will automatically be added to your navidrome library as well.
 
 ### users
 you can make multiple users with separate libraries and permissions. in my testing so far i have had multiple users but one shared library, and this seems to be the simplest way to share music but have your own playlists.
