@@ -57,6 +57,22 @@ services:
       - slskd
       - filebrowser
     restart: unless-stopped
+  request_queue:
+    build:
+      context: ./request_queue
+    container_name: request_queue
+    user: 1000:1000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./request_queue_data:/app/data
+      - ./music:/music:rw
+    environment:
+      - SLSKD_BASE_URL=http://slskd:5030
+      - MUSIC_DIR=/music
+    depends_on:
+      - slskd
+    restart: unless-stopped
   zrok_navidrome:
     image: openziti/zrok
     restart: unless-stopped
