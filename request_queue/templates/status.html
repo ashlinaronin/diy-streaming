@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Request Status</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;text-align:left}</style>
+  </head>
+  <body>
+    <h1>Request Status</h1>
+    <p><a href="/request/">New requests</a></p>
+    <table id="jobs-table">
+      <thead>
+        <tr><th>ID</th><th>Search Query</th><th>Status</th><th>Result</th><th>Error</th></tr>
+      </thead>
+      <tbody>
+        {% for j in jobs %}
+        <tr>
+          <td><a href="/progress/{{ j.id }}">{{ j.id }}</a></td>
+          <td>{{ j.line }}</td>
+          <td>{{ j.status }}</td>
+          <td class="progress-cell">
+            {% if j.result is mapping and j.result.expected_files %}
+              {% for file in j.result.expected_files %}
+                {{ file }}{% if not loop.last %}<br>{% endif %}
+              {% endfor %}
+            {% elif j.result is sequence and j.result is not string %}
+              {% for file in j.result %}
+                {{ file }}{% if not loop.last %}<br>{% endif %}
+              {% endfor %}
+            {% elif j.progress %}
+              {{ j.progress }}
+            {% elif j.result %}
+              {{ j.result }}
+            {% endif %}
+          </td>
+          <td>{{ j.error }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+  <script>
+    function extractFileList(job){
+      if (!job || !job.result) return null;
+
+      if (Array.isArray(job.result)) return job.result;
+
+      if (typeof job.result === 'object') {
+        if (Array.isArray(job.result.expected_files)) return job.result.expected_files;
+        if (typeof job.result.expected_files === 'string') {
+          try {
+            const parsed = JSON.parse(job.result.expected_files.replace(/'/g, '"'));
+            if (Array.isArray(parsed)) return parsed;
+          } catch (e) {
+            return null;
+          }
+        }
+      }
+
+      if (typeof job.result === 'string') {
+        const text = job.result.trim();
+        if (text.startsWith('{') && text.includes('expected_files')) {
+          try {
+            const parsed = JSON.parse(text);
+            if (Array.isArray(parsed.expected_files)) return parsed.expected_files;
+          } catch (e) {}
+        }
+        if (text.startsWith('[')) {
+          try {
+            const parsed = JSON.parse(text.replace(/'/g, '"'));
+            if (Array.isArray(parsed)) return parsed;
+          } catch (e) {}
+        }
+        const matches = [...text.matchAll(/'([^']+)'/g)].map(m => m[1]);
+        if (matches.length) return matches;
+      }
+
+      return null;
+    }
+
+    function formatResultCell(job){
+      const files = extractFileList(job);
+      if (files && files.length) return files.join('<br>');
+      if (job.progress) return job.progress;
+      if (job.result) return String(job.result);
+      return '';
+    }
+
+    async function refreshJobs(){
+      try{
+        const res=await fetch('/api/jobs');
+        const data=await res.json();
+        const rows = document.querySelectorAll('#jobs-table tbody tr');
+        // map by id
+        const map = {};
+        data.forEach(r=>map[String(r.id)]=r);
+        rows.forEach(row=>{
+          const id = row.querySelector('td a')?.innerText;
+          if (!id) return;
+          const job = map[id];
+          if (!job) return;
+          // columns: 0 ID, 1 Search Query, 2 Status, 3 Result, 4 Error
+          row.children[1].innerText = job.line || '';
+          row.children[2].innerText = job.status;
+          row.querySelector('.progress-cell').innerHTML = formatResultCell(job);
+          row.children[4].innerText = job.error || '';
+        });
+      }catch(e){console.debug('refresh failed',e)}
+    }
+    setInterval(refreshJobs,3000);
+  </script>
+</html>

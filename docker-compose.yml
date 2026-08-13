@@ -1,14 +1,13 @@
 services:
   slskd:
     image: slskd/slskd:latest
-    user: 1000:1000
     container_name: slskd
     ports:
       - "5030:5030" # web UI HTTP
       - "5031:5031" # web UI HTTPS
       - "50300:50300" # listen for incoming connections
     volumes:
-      - ./slskd_data:/app/data # Persistent storage for slskd configuration and data
+      - slskd_data:/app # Persistent storage for slskd configuration and data
       - ./music:/music:rw # Mount your music library, ensure slskd can read/write
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
@@ -22,7 +21,6 @@ services:
     restart: unless-stopped
   navidrome:
     image: deluan/navidrome:latest
-    user: 1000:1000
     container_name: navidrome
     ports:
       - "4533:4533" # Navidrome web interface port
@@ -37,7 +35,6 @@ services:
   filebrowser:
     image: filebrowser/filebrowser:latest
     container_name: filebrowser
-    user: 1000:1000
     ports:
       - "8081:80" # Web UI accessible at http://localhost:8080
     volumes:
@@ -56,22 +53,37 @@ services:
     depends_on:
       - slskd
       - filebrowser
+      - request_queue
     restart: unless-stopped
   request_queue:
     build:
       context: ./request_queue
     container_name: request_queue
-    user: 1000:1000
     ports:
-      - "5000:5000"
+      - "5002:5000"
     volumes:
+      - ./request_queue:/app
       - ./request_queue_data:/app/data
       - ./music:/music:rw
     environment:
-      - SLSKD_BASE_URL=http://slskd:5030
+      - SLSKD_BASE_URL=${SLSKD_BASE_URL:-http://slskd:5030}
+      - SLSKD_USERNAME=${SLSKD_USERNAME}
+      - SLSKD_PASSWORD=${SLSKD_PASSWORD}
       - MUSIC_DIR=/music
     depends_on:
       - slskd
+    restart: unless-stopped
+  slskd_mock:
+    build:
+      context: ./e2e/slskd_mock
+    container_name: slskd_mock
+    ports:
+      - "5035:5030"
+    volumes:
+      - ./music:/music:rw
+      - ./e2e/slskd_mock:/app
+    environment:
+      - PORT=5030
     restart: unless-stopped
   zrok_navidrome:
     image: openziti/zrok
@@ -84,6 +96,7 @@ services:
     command: share reserved "${STREAMING_SERVER_NAME}" --headless --override-endpoint http://navidrome:4533
     depends_on:
       - navidrome
+
   zrok_file:
     image: openziti/zrok
     restart: unless-stopped
@@ -95,3 +108,6 @@ services:
     command: share reserved "${FILE_SERVER_NAME}" --headless --override-endpoint http://nginx:8080
     depends_on:
       - nginx
+
+volumes:
+  slskd_data:

@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Job Progress {{ job.id }}</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem} .bar{background:#eee;border:1px solid #ccc;height:20px;border-radius:4px;overflow:hidden} .fill{background:#4caf50;height:100%;width:0%}</style>
+  </head>
+  <body>
+    <h1>Job {{ job.id }} progress</h1>
+    <p><strong>Request:</strong> {{ job.line }}</p>
+    <p><strong>Status:</strong> <span id="status">{{ job.status }}</span></p>
+    <p><strong>Progress:</strong> <span id="progress">{{ job.progress or 'N/A' }}</span></p>
+    <div class="bar" aria-hidden="true"><div id="fill" class="fill" style="width:0%"></div></div>
+    <p><a href="/status">Back to list</a></p>
+
+    <script>
+      const jobId = {{ job.id }};
+      function update() {
+        fetch(`/api/job/${jobId}`).then(r=>r.json()).then(data=>{
+          document.getElementById('status').innerText = data.status;
+          document.getElementById('progress').innerText = data.progress || 'N/A';
+          const p = data.progress || null;
+          if (p && p.indexOf('/')>-1) {
+            const parts = p.split('/').map(Number);
+            const pct = parts[1]===0?0:Math.round((parts[0]/parts[1])*100);
+            document.getElementById('fill').style.width = pct + '%';
+          }
+        }).catch(()=>{});
+      }
+      update();
+      setInterval(update, 3000);
+    </script>
+  </body>
+</html>
