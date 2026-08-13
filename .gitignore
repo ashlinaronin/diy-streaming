@@ -1,4 +1,5 @@
 slskd_data/*
 navidrome_data/*
 music/*
-filebrowser_data/*
+filebrowser_data/*e2e/node_modules/
+node_modules/
