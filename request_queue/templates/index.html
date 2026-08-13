@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Album Request Queue</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}textarea{width:100%;height:200px}</style>
+  </head>
+  <body>
+    <h1>Request Albums</h1>
+    <p>Paste one free-form search per line (e.g. "heavy metal cameron winter") and submit.</p>
+    <form method="post" action="/submit">
+      <textarea name="requests" placeholder="heavy metal cameron winter\n..."> </textarea>
+      <div style="margin-top:1rem"><button type="submit">Submit</button> <a href="/status">View status</a></div>
+    </form>
+  </body>
+</html>
